@@ -44,11 +44,11 @@ public class PlayerEffects : MonoBehaviour {
     void Update() {
 
         if(transform.localEulerAngles.x < 330f && transform.localEulerAngles.x > 280f) {
-            Debug.Log(transform.localEulerAngles.x);
+            //Debug.Log(transform.localEulerAngles.x);
             float closenessToTopOfSkybox = Mathf.Abs(skyBoxRotationTopX - transform.localEulerAngles.x);
-            Debug.Log("rotation = " + closenessToTopOfSkybox);
+            //Debug.Log("rotation = " + closenessToTopOfSkybox);
             float focalLength = (closenessToTopOfSkybox * 2f);
-            Debug.Log("Focal length pre x 2 = " + focalLength);
+            //Debug.Log("Focal length pre x 2 = " + focalLength);
 
             if (focalLength <= 0) {
                 focalLength = 0.001f;
@@ -56,20 +56,20 @@ public class PlayerEffects : MonoBehaviour {
 
             focalLength = focalLength / 1100;
             
-            Debug.Log("Focal length post conditional " + focalLength);
+            //Debug.Log("Focal length post conditional " + focalLength);
 
             //const float MAX_FOCAL = 95;
-            Debug.Log("Focal length final * 95 = " + focalLength);
+            //Debug.Log("Focal length final * 95 = " + focalLength);
 
             bokeh.focalLength = focalLength;
         }
 
         if (!controller.isGrounded) { //player jumps
-            Debug.Log("Intensity of dig glitch: " + digitalGlitch.intensity);
+            //Debug.Log("Intensity of dig glitch: " + digitalGlitch.intensity);
 
-            Debug.Log("Player Position: (x,y,z): (" + gameObject.transform.position.x + "," +
-                gameObject.transform.position.y + "," +
-                gameObject.transform.position.z + ")");
+            //Debug.Log("Player Position: (x,y,z): (" + gameObject.transform.position.x + "," +
+                //gameObject.transform.position.y + "," +
+                //gameObject.transform.position.z + ")");
         }
 
         float glitchVal = 0;
@@ -105,7 +105,7 @@ public class PlayerEffects : MonoBehaviour {
             float directionalCloseness = glitchVal;
             
             float directionalLightIntensity  = directionalCloseness <= 0 ? 1.76f : Mathf.Abs(1.76f - (directionalCloseness * 5));            
-            Debug.Log(glitchVal + ", " + directionalLightIntensity);
+            //Debug.Log(glitchVal + ", " + directionalLightIntensity);
             light.intensity = directionalLightIntensity;
 
             float skyBoxBlendVal = glitchVal * 3 > 1f ? 1f : glitchVal * 3;
