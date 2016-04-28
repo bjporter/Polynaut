@@ -1,0 +1,1 @@
+A personal game jam starting April 28th 2016, and ending on midnight April 30th 2016.
