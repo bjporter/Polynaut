@@ -104,8 +104,9 @@ public class PlayerEffects : MonoBehaviour {
 
             float directionalCloseness = glitchVal;
             
-            float directionalLightIntensity  = directionalCloseness <= 0 ? 1.76f : Mathf.Abs(1.76f - (directionalCloseness * 5));            
-            //Debug.Log(glitchVal + ", " + directionalLightIntensity);
+            float directionalLightIntensity  = directionalCloseness <= 0 ? 1.76f : Mathf.Abs(1.76f - (directionalCloseness * 5));
+            //Debug.Log("glitch val | directionalLightIntensity | subtraction | directionalCloseness");
+            //Debug.Log(glitchVal + ", " + directionalLightIntensity + ", " + Mathf.Abs(1.76f - (directionalCloseness * 5)) * .5 + " , " + directionalCloseness);
             light.intensity = directionalLightIntensity;
 
             float skyBoxBlendVal = glitchVal * 3 > 1f ? 1f : glitchVal * 3;
