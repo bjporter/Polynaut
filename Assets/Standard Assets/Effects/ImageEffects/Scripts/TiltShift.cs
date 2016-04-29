@@ -5,7 +5,7 @@ namespace UnityStandardAssets.ImageEffects
 {
     [RequireComponent (typeof(Camera))]
     [AddComponentMenu ("Image Effects/Camera/Tilt Shift (Lens Blur)")]
-    class TiltShift : PostEffectsBase {
+    public class TiltShift : PostEffectsBase {
         public enum TiltShiftMode
         {
             TiltShiftMode,
