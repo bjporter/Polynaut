@@ -19,7 +19,7 @@ public class DetonatorSound : DetonatorComponent {
 	
 	override public void Init()
 	{
-		_soundComponent = (AudioSource)gameObject.AddComponent <AudioSource>();
+		_soundComponent = gameObject.GetComponent<AudioSource>();
 	}
 
 	void Update()
@@ -37,8 +37,13 @@ public class DetonatorSound : DetonatorComponent {
 			}
 		}
 	}
-	
-	private int _idx;
+
+    private void PlaySoundThroughMixer(AudioClip clip) {
+        _soundComponent.clip = clip;
+        _soundComponent.Play();
+    }
+
+    private int _idx;
 	override public void Explode()
 	{
 		if (detailThreshold > detail) return;
@@ -56,12 +61,14 @@ public class DetonatorSound : DetonatorComponent {
 			if (Vector3.Distance(Camera.main.transform.position, this.transform.position) < distanceThreshold)
 			{
 				_idx = (int)(Random.value * nearSounds.Length);
-				_soundComponent.PlayOneShot(nearSounds[_idx]);
-			}
+                PlaySoundThroughMixer(nearSounds[_idx]);
+                //_soundComponent.PlayOneShot(nearSounds[_idx]);
+            }
 			else
 			{
 				_idx = (int)(Random.value * farSounds.Length);
-				_soundComponent.PlayOneShot(farSounds[_idx]);
+                PlaySoundThroughMixer(nearSounds[_idx]);
+                //_soundComponent.PlayOneShot(farSounds[_idx]);
 			}	
 			_delayedExplosionStarted = false;
 			_explodeDelay = 0f;			
