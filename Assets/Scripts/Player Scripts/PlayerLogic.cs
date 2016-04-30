@@ -94,19 +94,24 @@ public class PlayerLogic : MonoBehaviour {
     ////////////////////////////////////
     /// Player / HUD / Game Variables
     ////////////////////////////////////
-    public float powerPercent;
-    public const float POWER_START_PERCENT = 75.582f;
-    public float powerSecondsLeft = 120f;
-    public const float POWER_SECONDS_START = 120f;
-    public bool  powerStartCountDown = false;
+    private float powerPercent;
+    private float powerStartPercent = 75.582f;
+    private float powerSecondsLeft = 30; 
+    private float powerSecondsStart = 30;
+    private bool powerStartCountDown = false;
+    private int battariesLeft = 3;
 
     private bool endingTwoOfThreeStarted = false;
+    private bool endingThreeOfThreeStarted = false;
 
     [SerializeField]
     private GameObject titlePanel;
 
     [SerializeField]
     private ShakyText mainMenuTitle;
+
+    private bool showPolyNaut;
+    private float mainMenuAlphaStart = 0;
 
     [SerializeField]
     private ShakyText mainMenuPresAnyToStart;
@@ -115,7 +120,10 @@ public class PlayerLogic : MonoBehaviour {
     private GameObject mainMenuAsteroids;
 
     [SerializeField]
-    private GameObject gameOverPanel;
+    private GameObject gameOverPanelEnding2;
+
+    [SerializeField]
+    private GameObject gameOverPanelEnding3;
 
     [SerializeField]
     private GameObject hudPanel;
@@ -125,6 +133,9 @@ public class PlayerLogic : MonoBehaviour {
 
     [SerializeField]
     private GameObject asteroidField1;
+
+    [SerializeField]
+    private GameObject largeShip;
 
     private ShakyText hudPowerText;
 
@@ -152,7 +163,7 @@ public class PlayerLogic : MonoBehaviour {
         analogGlitch.horizontalShake = .011f;                                                          
         analogGlitch.colorDrift = .11f;
 
-        powerPercent = POWER_START_PERCENT;
+        powerPercent = powerStartPercent;
     }
 
     void Start() {
@@ -161,10 +172,20 @@ public class PlayerLogic : MonoBehaviour {
     private float endGameRotationYStart;
     private float endGameRotationXStart;
 
+    public void AddBatteryPower() {
+        battariesLeft--;
+        powerSecondsLeft += 30;
+    }
+
     void Update () {
         //KEEP AT THE TOP
         if (gameStarted && Input.GetKeyDown(KeyCode.Escape)) {
             Application.Quit();
+        }
+
+        if(endingThreeOfThreeStarted) {
+            gameOverPanelEnding3.SetActive(true);
+            fpsController.LockKeyboardMove();
         }
 
         if (endingTwoOfThreeStarted) {
@@ -214,7 +235,7 @@ public class PlayerLogic : MonoBehaviour {
             asteroidField1.SetActive(true);
             asteroidField1.transform.position = player.transform.position;
             hudPanel.SetActive(false);
-            gameOverPanel.SetActive(true);
+            gameOverPanelEnding2.SetActive(true);
             endGameRotationYStart = player.transform.rotation.eulerAngles.y;
             endGameRotationXStart = transform.rotation.eulerAngles.x;
 }
@@ -231,11 +252,14 @@ public class PlayerLogic : MonoBehaviour {
 
         if(powerStartCountDown) {
             powerSecondsLeft -= Time.deltaTime;
-            powerPercent = (powerSecondsLeft / POWER_SECONDS_START) * POWER_START_PERCENT;
-            //Debug.Log(Time.deltaTime + ", " + powerSecondsLeft);
+            powerPercent = (powerSecondsLeft / powerSecondsStart) * powerStartPercent;
+            Debug.Log(Time.deltaTime);
+            Debug.Log("Time: " + Time.deltaTime + ", " + powerSecondsLeft);
+            Debug.Log("*" + "(" + powerSecondsStart + ") * " + powerStartPercent);
 
-            if(powerPercent < 0.025f) {
+            if (powerPercent < 0.025f) {
 
+                endingThreeOfThreeStarted = true;
                 powerPercent = 0.0f;
             }
 
@@ -297,7 +321,22 @@ public class PlayerLogic : MonoBehaviour {
                 mainMenuTitle.SetAlpha(analogGlitch.colorDrift - intensityIncrement < 0 ? 0 : analogGlitch.colorDrift - intensityIncrement);
             }
         } else {
+            if (Time.deltaTime >= ONE_FRAME_60FPS) { // or 1/60th a frame
+                
+                if(showPolyNaut && mainMenuAlphaStart <= .3) {
+                    mainMenuAlphaStart += 0.0065f;
+                    mainMenuTitle.SetAlpha(mainMenuAlphaStart);
+                    mainMenuPresAnyToStart.SetAlpha(mainMenuAlphaStart);
+                }
 
+                if (largeShip.transform.position.y >= 300f) {
+                    Vector3 t = largeShip.transform.position;
+                    t.y -= 6f;
+                    largeShip.transform.position = t;
+                } else {
+                    showPolyNaut = true;
+                }
+            }
         } //If game started, else you're in the menu
     } //Update()
 }
