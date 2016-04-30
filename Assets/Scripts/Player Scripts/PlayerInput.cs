@@ -99,6 +99,10 @@ public class PlayerInput : MonoBehaviour {
     [SerializeField]
     private Text title_start_text_layer3;
 
+    private float text1X = 0f;
+    private float text2X = 0f;
+    private float text3X = 0f;
+
     void Awake () {
         fpsController = gameObject.GetComponentInParent<FirstPersonController>();
         characterController = gameObject.GetComponentInParent<CharacterController>();
@@ -118,6 +122,10 @@ public class PlayerInput : MonoBehaviour {
         analogGlitch.horizontalShake = .011f;                                                          
         analogGlitch.colorDrift = .11f;
 
+        text1X = title_start_text_layer1.transform.position.x;
+        text2X = title_start_text_layer2.transform.position.x;
+        text3X = title_start_text_layer3.transform.position.x;
+
         //tiltShift.enabled = true;
         //bloomAndFlares.enabled = true;
     }
@@ -131,6 +139,10 @@ public class PlayerInput : MonoBehaviour {
         if (Input.anyKey && !gameObject.GetComponentInParent<FirstPersonController>().isActiveAndEnabled) {
             gameObject.GetComponentInParent<FirstPersonController>().enabled = true;
             gameStarted = true;
+        }
+
+        if (gameStarted && Input.GetKeyDown(KeyCode.Escape)) {
+            Application.Quit();
         }
 
         Debug.Log("Delta time: " + Time.deltaTime);
@@ -152,7 +164,7 @@ public class PlayerInput : MonoBehaviour {
             /////////////////////////////////////////////////
             if (characterController.isGrounded) {
                 if(!hitGroundForFirstTime) {
-                    cameraShake.shakeDuration = 5;
+                    cameraShake.shakeDuration = 2;
                     puffOfSmokeDetonator.Explode();
                     hitGroundForFirstTime = true;
                 }
@@ -184,20 +196,41 @@ public class PlayerInput : MonoBehaviour {
             }
         } else {
             if (Time.deltaTime >= ONE_FRAME_60FPS) { // or 1/60th a frame
-                float randomStart = Random.Range(-.5f, .5f);
+                float textRange = 2.5f;
+                float outOfBoundsX = 5f;
+
+                float randomStart = Random.Range(-textRange, textRange);
                 Vector3 t = title_start_text_layer1.transform.position;
                 t.x += randomStart;
+
+                if (Mathf.Abs(title_start_text_layer1.transform.position.x - text1X) > outOfBoundsX) {
+                    t.x = text1X;
+                }
+
                 title_start_text_layer1.transform.position = t;
-                Debug.Log("**RANDOM START** " + randomStart);
-                randomStart = Random.Range(-.5f, .5f);
+
+
+                randomStart = Random.Range(-textRange, textRange);
                 t = title_start_text_layer2.transform.position;
                 t.x += randomStart;
+
+                if(Mathf.Abs(title_start_text_layer2.transform.position.x - text2X) > outOfBoundsX) {
+                    t.x = text2X;
+                }
+
                 title_start_text_layer2.transform.position = t;
 
-                randomStart = Random.Range(-.5f, .5f);
+                randomStart = Random.Range(-textRange, textRange);
                 t = title_start_text_layer3.transform.position;
                 t.x += randomStart;
+
+
+                if (Mathf.Abs(title_start_text_layer3.transform.position.x - text3X) > outOfBoundsX) {
+                    t.x = text3X;
+                }
+
                 title_start_text_layer3.transform.position = t;
+
             }
         }
     }
