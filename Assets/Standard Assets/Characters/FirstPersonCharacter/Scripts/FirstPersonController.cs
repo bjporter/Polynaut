@@ -45,6 +45,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private float xSensitivityVal = 0f;
         private float ySensitivityVal = 0f;
         private bool movementLocked = false;
+        private bool mouseLocked = false;
 
         // Use this for initialization
         private void Start()
@@ -84,12 +85,18 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_MouseLook.XSensitivity = 0;
             m_MouseLook.YSensitivity = 0;
 
+            mouseLocked = true;
+
         }
 
         //Set mouse look to what it was in the inspector
         public void UnlockMouseLook() {
-            m_MouseLook.XSensitivity = xSensitivityVal;
-            m_MouseLook.YSensitivity = ySensitivityVal;
+            if(mouseLocked) {
+                m_MouseLook.XSensitivity = xSensitivityVal;
+                m_MouseLook.YSensitivity = ySensitivityVal;
+
+                mouseLocked = false;
+            }
         }
 
         // Update is called once per frame

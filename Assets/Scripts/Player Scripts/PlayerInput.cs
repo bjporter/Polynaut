@@ -11,7 +11,9 @@ public class PlayerInput : MonoBehaviour {
     ///////////////////////
     /// Player Components
     ///////////////////////
+    [SerializeField]
     private GameObject player;
+
     private FirstPersonController fpsController;
     private CharacterController characterController;
 
@@ -51,7 +53,10 @@ public class PlayerInput : MonoBehaviour {
     /// Player is out of the start menu, and in the game
     /// </summary>
     private bool gameStarted = false;
-    private float secondsOfTransitionAfterGameStarted = 5f;
+    private float gameStartedAt = 0;
+    private bool setGameStartedAt = false;
+    private float transitionAfterGameStartedSeconds = 5f;
+    private float secondsOfAfterGameStarted = 0f;
 
     /// <summary>
     /// Falling Will now Start.
@@ -83,14 +88,17 @@ public class PlayerInput : MonoBehaviour {
     /// Player has hit the ground for the first time, explosion starts
     /// </summary>
     private bool hitGroundForFirstTime = false;
-    
+
     /*
     private bool isEnding1; // teleport out
     private bool isEnding2; // falling
     private bool isEnding3; // power
     */
 
-        
+
+    [SerializeField]
+    private GameObject titlePanel;
+
     [SerializeField]
     private ShakyText mainMenuTitle;
 
@@ -99,6 +107,9 @@ public class PlayerInput : MonoBehaviour {
 
     [SerializeField]
     private GameObject mainMenuAsteroids;
+
+    [SerializeField]
+    private GameObject gameOverPanel;
 
     void Awake () {
         fpsController = gameObject.GetComponentInParent<FirstPersonController>();
@@ -128,6 +139,12 @@ public class PlayerInput : MonoBehaviour {
     }
 
     void Update () {
+        if(player.transform.position.y <= -50f) {
+            fpsController.LockKeyboardMove();
+            fpsController.LockMouseLook();
+            gameOverPanel.SetActive(true);
+        }
+
         //Debug.Log("game object info: " + gameObject.GetComponentInParent<FirstPersonController>().isActiveAndEnabled);
 
         /*
@@ -136,8 +153,8 @@ public class PlayerInput : MonoBehaviour {
         if (Input.anyKey && !gameObject.GetComponentInParent<FirstPersonController>().isActiveAndEnabled) {
             gameObject.GetComponentInParent<FirstPersonController>().enabled = true;
             gameStarted = true;
-            fpsController.LockMouseLook();
-            fpsController.LockKeyboardMove();
+            //fpsController.LockMouseLook();
+            //fpsController.LockKeyboardMove();
         }
 
         if (gameStarted && Input.GetKeyDown(KeyCode.Escape)) {
@@ -157,6 +174,15 @@ public class PlayerInput : MonoBehaviour {
         }
 
         if (gameStarted) {
+            if(!setGameStartedAt) {
+                secondsOfAfterGameStarted = Time.time;
+                setGameStartedAt = true;
+            }
+
+            if(Time.time > secondsOfAfterGameStarted + transitionAfterGameStartedSeconds) {
+                titlePanel.SetActive(false);
+            }
+
             mainMenuAsteroids.SetActive(false);
 
             /////////////////////////////////////////////////
@@ -173,13 +199,13 @@ public class PlayerInput : MonoBehaviour {
             }
 
             if (Time.deltaTime >= ONE_FRAME_60FPS) { // or 1/60th a frame
-                float intensityIncrement = (Time.deltaTime / secondsOfTransitionAfterGameStarted); // over 3 seconds get %, and multiply by max intensity of 95
+                float intensityIncrement = (Time.deltaTime / transitionAfterGameStartedSeconds); // over 3 seconds get %, and multiply by max intensity of 95
                 digitalGlitch.intensity = digitalGlitch.intensity - intensityIncrement < 0 ? 0 : digitalGlitch.intensity - intensityIncrement;
                 analogGlitch.scanLineJitter = analogGlitch.scanLineJitter - intensityIncrement < 0 ? 0 : analogGlitch.scanLineJitter - intensityIncrement;
                 analogGlitch.verticalJump = analogGlitch.verticalJump - intensityIncrement < 0 ? 0 : analogGlitch.verticalJump - intensityIncrement;
                 analogGlitch.horizontalShake = analogGlitch.horizontalShake - intensityIncrement < 0 ? 0 : analogGlitch.horizontalShake - intensityIncrement;
                 analogGlitch.colorDrift = analogGlitch.colorDrift  - intensityIncrement < 0 ? 0 : analogGlitch.colorDrift - intensityIncrement;
-                noiseAndGrain.intensityMultiplier = (analogGlitch.colorDrift - intensityIncrement < 0 ? 0 : analogGlitch.colorDrift - intensityIncrement)/7f;
+                noiseAndGrain.intensityMultiplier = (analogGlitch.colorDrift - intensityIncrement < 0 ? 0 : analogGlitch.colorDrift - intensityIncrement)/3f;
                 tiltShift.blurArea = (analogGlitch.colorDrift - intensityIncrement < 0 ? 0 : analogGlitch.colorDrift - intensityIncrement)/15;
                 bloomAndFlares.bloomIntensity = analogGlitch.horizontalShake - intensityIncrement < 0 ? 0 : analogGlitch.horizontalShake - intensityIncrement;
                 ramp.opacity = analogGlitch.horizontalShake - intensityIncrement < 0 ? 0 : analogGlitch.horizontalShake - intensityIncrement;
