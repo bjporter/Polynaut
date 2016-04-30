@@ -43,6 +43,7 @@ public class PlayerInput : MonoBehaviour {
 
     ///////////////////////
     /// Game States
+    /// Notes: Use camera parent y position for height checks (height right now is 25.8594y)
     ///////////////////////
 
     /// <summary>
