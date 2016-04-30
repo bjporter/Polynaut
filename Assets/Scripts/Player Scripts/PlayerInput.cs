@@ -144,6 +144,7 @@ public class PlayerInput : MonoBehaviour {
             gameObject.GetComponentInParent<FirstPersonController>().enabled = true;
             gameStarted = true;
             fpsController.LockMouseLook();
+            fpsController.LockKeyboardMove();
         }
 
         if (gameStarted && Input.GetKeyDown(KeyCode.Escape)) {
@@ -169,6 +170,7 @@ public class PlayerInput : MonoBehaviour {
             if (characterController.isGrounded) {
                 if(!hitGroundForFirstTime) {
                     fpsController.UnlockMouseLook();
+                    fpsController.UnlockKeyboardMove();
                     cameraShake.shakeDuration = 2;
                     puffOfSmokeDetonator.Explode();
                     hitGroundForFirstTime = true;

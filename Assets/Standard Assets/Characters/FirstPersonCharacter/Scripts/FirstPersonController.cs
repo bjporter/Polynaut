@@ -44,6 +44,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private float xSensitivityVal = 0f;
         private float ySensitivityVal = 0f;
+        private bool movementLocked = false;
 
         // Use this for initialization
         private void Start()
@@ -60,6 +61,18 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			m_MouseLook.Init(transform , m_Camera.transform);
         }
 
+
+        public void LockKeyboardMove() {
+            movementLocked = true;
+        }
+
+        public void UnlockKeyboardMove() {
+            movementLocked = false;
+        }
+
+        private bool IsKeyboardLocked() {
+            return movementLocked;
+        }
 
         public void LockMouseLook() {
             /*
@@ -79,20 +92,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_MouseLook.YSensitivity = ySensitivityVal;
         }
 
-        public void LockASDW() {
-
-        }
-
-        public void UnlockASDW() {
-
-        }
-
         // Update is called once per frame
         private void Update()
         {
             RotateView();
             // the jump state needs to read here to make sure it is not missed
-            if (!m_Jump)
+            if (!m_Jump && !IsKeyboardLocked())
             {
                 m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
             }
@@ -232,6 +237,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
 
         private void GetInput(out float speed)
         {
+            if(IsKeyboardLocked()) {
+                speed = 0.0f;
+                return;
+            }
+
             // Read input
             float horizontal = CrossPlatformInputManager.GetAxis("Horizontal");
             float vertical = CrossPlatformInputManager.GetAxis("Vertical");
