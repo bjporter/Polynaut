@@ -90,18 +90,15 @@ public class PlayerInput : MonoBehaviour {
     private bool isEnding3; // power
     */
 
+        
     [SerializeField]
-    private Text title_start_text_layer1;
+    private ShakyText mainMenuTitle;
 
     [SerializeField]
-    private Text title_start_text_layer2;
+    private ShakyText mainMenuPresAnyToStart;
 
     [SerializeField]
-    private Text title_start_text_layer3;
-
-    private float text1X = 0f;
-    private float text2X = 0f;
-    private float text3X = 0f;
+    private GameObject mainMenuAsteroids;
 
     void Awake () {
         fpsController = gameObject.GetComponentInParent<FirstPersonController>();
@@ -121,10 +118,6 @@ public class PlayerInput : MonoBehaviour {
         analogGlitch.verticalJump = .02f;
         analogGlitch.horizontalShake = .011f;                                                          
         analogGlitch.colorDrift = .11f;
-
-        text1X = title_start_text_layer1.transform.position.x;
-        text2X = title_start_text_layer2.transform.position.x;
-        text3X = title_start_text_layer3.transform.position.x;
 
         //tiltShift.enabled = true;
         //bloomAndFlares.enabled = true;
@@ -164,6 +157,8 @@ public class PlayerInput : MonoBehaviour {
         }
 
         if (gameStarted) {
+            mainMenuAsteroids.SetActive(false);
+
             /////////////////////////////////////////////////
             /// Hit Ground After falling out of big ship
             /////////////////////////////////////////////////
@@ -189,56 +184,12 @@ public class PlayerInput : MonoBehaviour {
                 bloomAndFlares.bloomIntensity = analogGlitch.horizontalShake - intensityIncrement < 0 ? 0 : analogGlitch.horizontalShake - intensityIncrement;
                 ramp.opacity = analogGlitch.horizontalShake - intensityIncrement < 0 ? 0 : analogGlitch.horizontalShake - intensityIncrement;
 
-                Color c = title_start_text_layer1.color;
-                c.a = analogGlitch.colorDrift - intensityIncrement < 0 ? 0 : analogGlitch.colorDrift - intensityIncrement;
-                title_start_text_layer1.color = c;
 
-                c = title_start_text_layer2.color;
-                c.a = analogGlitch.colorDrift - intensityIncrement < 0 ? 0 : analogGlitch.colorDrift - intensityIncrement;
-                title_start_text_layer2.color = c;
-
-                c = title_start_text_layer3.color;
-                c.a = analogGlitch.colorDrift - intensityIncrement < 0 ? 0 : analogGlitch.colorDrift - intensityIncrement;
-                title_start_text_layer3.color = c;
+                mainMenuPresAnyToStart.SetAlpha(analogGlitch.colorDrift - intensityIncrement < 0 ? 0 : analogGlitch.colorDrift - intensityIncrement);
+                mainMenuTitle.SetAlpha(analogGlitch.colorDrift - intensityIncrement < 0 ? 0 : analogGlitch.colorDrift - intensityIncrement);
             }
         } else {
-            if (Time.deltaTime >= ONE_FRAME_60FPS) { // or 1/60th a frame
-                float textRange = 2.5f;
-                float outOfBoundsX = 5f;
 
-                float randomStart = Random.Range(-textRange, textRange);
-                Vector3 t = title_start_text_layer1.transform.position;
-                t.x += randomStart;
-
-                if (Mathf.Abs(title_start_text_layer1.transform.position.x - text1X) > outOfBoundsX) {
-                    t.x = text1X;
-                }
-
-                title_start_text_layer1.transform.position = t;
-
-
-                randomStart = Random.Range(-textRange, textRange);
-                t = title_start_text_layer2.transform.position;
-                t.x += randomStart;
-
-                if(Mathf.Abs(title_start_text_layer2.transform.position.x - text2X) > outOfBoundsX) {
-                    t.x = text2X;
-                }
-
-                title_start_text_layer2.transform.position = t;
-
-                randomStart = Random.Range(-textRange, textRange);
-                t = title_start_text_layer3.transform.position;
-                t.x += randomStart;
-
-
-                if (Mathf.Abs(title_start_text_layer3.transform.position.x - text3X) > outOfBoundsX) {
-                    t.x = text3X;
-                }
-
-                title_start_text_layer3.transform.position = t;
-
-            }
         } //If game started, else you're in the menu
     } //Update()
 }
