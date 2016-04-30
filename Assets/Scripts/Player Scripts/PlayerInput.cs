@@ -130,6 +130,10 @@ public class PlayerInput : MonoBehaviour {
         //bloomAndFlares.enabled = true;
     }
 
+    void Start() {
+        //lock player mouse test
+    }
+
     void Update () {
         //Debug.Log("game object info: " + gameObject.GetComponentInParent<FirstPersonController>().isActiveAndEnabled);
 
@@ -139,13 +143,14 @@ public class PlayerInput : MonoBehaviour {
         if (Input.anyKey && !gameObject.GetComponentInParent<FirstPersonController>().isActiveAndEnabled) {
             gameObject.GetComponentInParent<FirstPersonController>().enabled = true;
             gameStarted = true;
+            fpsController.LockMouseLook();
         }
 
         if (gameStarted && Input.GetKeyDown(KeyCode.Escape)) {
             Application.Quit();
         }
 
-        Debug.Log("Delta time: " + Time.deltaTime);
+        //Debug.Log("Delta time: " + Time.deltaTime);
 
         if(digitalGlitch.intensity <= 0) {
             if (tiltShift.isActiveAndEnabled) {
@@ -158,12 +163,12 @@ public class PlayerInput : MonoBehaviour {
         }
 
         if (gameStarted) {
-
             /////////////////////////////////////////////////
             /// Hit Ground After falling out of big ship
             /////////////////////////////////////////////////
             if (characterController.isGrounded) {
                 if(!hitGroundForFirstTime) {
+                    fpsController.UnlockMouseLook();
                     cameraShake.shakeDuration = 2;
                     puffOfSmokeDetonator.Explode();
                     hitGroundForFirstTime = true;
@@ -232,6 +237,6 @@ public class PlayerInput : MonoBehaviour {
                 title_start_text_layer3.transform.position = t;
 
             }
-        }
-    }
+        } //If game started, else you're in the menu
+    } //Update()
 }

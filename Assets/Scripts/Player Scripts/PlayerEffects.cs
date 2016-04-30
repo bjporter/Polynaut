@@ -42,7 +42,7 @@ public class PlayerEffects : MonoBehaviour {
     }
 
     void Update() {
-
+        
         if(transform.localEulerAngles.x < 330f && transform.localEulerAngles.x > 280f) {
             //Debug.Log(transform.localEulerAngles.x);
             float closenessToTopOfSkybox = Mathf.Abs(skyBoxRotationTopX - transform.localEulerAngles.x);

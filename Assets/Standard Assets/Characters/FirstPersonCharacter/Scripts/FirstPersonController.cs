@@ -42,6 +42,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private bool m_Jumping;
         private AudioSource m_AudioSource;
 
+        private float xSensitivityVal = 0f;
+        private float ySensitivityVal = 0f;
+
         // Use this for initialization
         private void Start()
         {
@@ -57,6 +60,32 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			m_MouseLook.Init(transform , m_Camera.transform);
         }
 
+
+        public void LockMouseLook() {
+            /*
+            Major issue: Why is this function being called BEFORE start? 
+            */
+            xSensitivityVal = m_MouseLook.XSensitivity;
+            ySensitivityVal = m_MouseLook.YSensitivity;
+
+            m_MouseLook.XSensitivity = 0;
+            m_MouseLook.YSensitivity = 0;
+
+        }
+
+        //Set mouse look to what it was in the inspector
+        public void UnlockMouseLook() {
+            m_MouseLook.XSensitivity = xSensitivityVal;
+            m_MouseLook.YSensitivity = ySensitivityVal;
+        }
+
+        public void LockASDW() {
+
+        }
+
+        public void UnlockASDW() {
+
+        }
 
         // Update is called once per frame
         private void Update()
