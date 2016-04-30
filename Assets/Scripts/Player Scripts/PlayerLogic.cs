@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class PlayerLogic : MonoBehaviour {
 
+    public static PlayerLogic instance;
+
     ///////////////////////
     /// Player Components
     ///////////////////////
@@ -89,6 +91,17 @@ public class PlayerLogic : MonoBehaviour {
     private bool hitGroundForFirstTime = false;
 
 
+    ////////////////////////////////////
+    /// Player / HUD / Game Variables
+    ////////////////////////////////////
+    public float powerPercent;
+    public const float POWER_START_PERCENT = 75.582f;
+    public float powerSecondsLeft = 120f;
+    public const float POWER_SECONDS_START = 120f;
+    public bool  powerStartCountDown = false;
+
+    private bool endingTwoOfThreeStarted = false;
+
     [SerializeField]
     private GameObject titlePanel;
 
@@ -107,7 +120,19 @@ public class PlayerLogic : MonoBehaviour {
     [SerializeField]
     private GameObject hudPanel;
 
+    [SerializeField]
+    private GameObject hudPowerTextGroup;
+
+    [SerializeField]
+    private GameObject asteroidField1;
+
+    private ShakyText hudPowerText;
+
     void Awake () {
+        if(instance == null) {
+            instance = this;
+        }
+
         fpsController = gameObject.GetComponentInParent<FirstPersonController>();
         characterController = gameObject.GetComponentInParent<CharacterController>();
         analogGlitch = gameObject.GetComponent<AnalogGlitch>();
@@ -118,6 +143,7 @@ public class PlayerLogic : MonoBehaviour {
         ramp = gameObject.GetComponents<Ramp>()[1];
         puffOfSmokeDetonator = puffOfSmoke.GetComponent<Detonator>();
         cameraShake = gameObject.GetComponent<CameraShake>();
+        hudPowerText = hudPowerTextGroup.GetComponent<ShakyText>();
 
         //Initialization
         digitalGlitch.intensity = .2f;
@@ -125,20 +151,73 @@ public class PlayerLogic : MonoBehaviour {
         analogGlitch.verticalJump = .02f;
         analogGlitch.horizontalShake = .011f;                                                          
         analogGlitch.colorDrift = .11f;
+
+        powerPercent = POWER_START_PERCENT;
     }
 
     void Start() {
     }
 
+    private float endGameRotationYStart;
+    private float endGameRotationXStart;
+
     void Update () {
-        if(player.transform.position.y <= -50f) {
-            fpsController.LockKeyboardMove();
-            fpsController.LockMouseLook();
-            hudPanel.SetActive(false);
-            gameOverPanel.SetActive(true);
+        //KEEP AT THE TOP
+        if (gameStarted && Input.GetKeyDown(KeyCode.Escape)) {
+            Application.Quit();
         }
 
-        //Debug.Log("game object info: " + gameObject.GetComponentInParent<FirstPersonController>().isActiveAndEnabled);
+        if (endingTwoOfThreeStarted) {
+            asteroidField1.transform.position = player.transform.position;
+
+            /* //Rotate player to top of screen
+            if (Time.deltaTime >= ONE_FRAME_60FPS) { // or 1/60th a frame
+                Vector3 eulerAngles = player.transform.rotation.eulerAngles;
+
+                Debug.Log("player val = " + player.transform.rotation.eulerAngles.y);
+                Debug.Log("cam val = " + transform.rotation.eulerAngles.x);
+
+                if (player.transform.rotation.eulerAngles.y > 86f) {
+                    eulerAngles.y -= ((player.transform.rotation.eulerAngles.y - 86f) / 180f);
+                }
+
+                if (player.transform.rotation.eulerAngles.y < 86f) {
+                    eulerAngles.y += ((86f - player.transform.rotation.eulerAngles.y) / 180f);
+                }
+
+
+                if (player.transform.rotation.eulerAngles.x > 287f) {
+                    eulerAngles.x -= ((player.transform.rotation.eulerAngles.x - 86f) / 180f);
+                }
+
+                if (player.transform.rotation.eulerAngles.x < 287f) {
+                    eulerAngles.x += ((86f - player.transform.rotation.eulerAngles.x) / 180f);
+                }
+
+
+
+                Debug.Log(eulerAngles.x + ", " + eulerAngles.y);
+                player.transform.rotation = Quaternion.Euler(0f, eulerAngles.y, 0f);
+                transform.rotation = Quaternion.Euler(eulerAngles.x, 180f, 180f);
+            }*/
+
+            return;
+        }
+
+        /////////////////////////////////////////////////////////////////
+        //// Player has fallen of ledge into oblivion, show asteroids
+        /////////////////////////////////////////////////////////////////
+        if (player.transform.position.y <= -100f) {
+            fpsController.LockKeyboardMove();
+            //fpsController.LockMouseLook();
+            endingTwoOfThreeStarted = true;
+            asteroidField1.SetActive(true);
+            asteroidField1.transform.position = player.transform.position;
+            hudPanel.SetActive(false);
+            gameOverPanel.SetActive(true);
+            endGameRotationYStart = player.transform.rotation.eulerAngles.y;
+            endGameRotationXStart = transform.rotation.eulerAngles.x;
+}
 
         /*
             GAME STARTED
@@ -147,14 +226,21 @@ public class PlayerLogic : MonoBehaviour {
             gameObject.GetComponentInParent<FirstPersonController>().enabled = true;
             gameStarted = true;
             //fpsController.LockMouseLook();
-            //fpsController.LockKeyboardMove();
+            fpsController.LockKeyboardMove();
         }
 
-        if (gameStarted && Input.GetKeyDown(KeyCode.Escape)) {
-            Application.Quit();
-        }
+        if(powerStartCountDown) {
+            powerSecondsLeft -= Time.deltaTime;
+            powerPercent = (powerSecondsLeft / POWER_SECONDS_START) * POWER_START_PERCENT;
+            //Debug.Log(Time.deltaTime + ", " + powerSecondsLeft);
 
-        //Debug.Log("Delta time: " + Time.deltaTime);
+            if(powerPercent < 0.025f) {
+
+                powerPercent = 0.0f;
+            }
+
+            hudPowerText.SetText(powerPercent.ToString("0.00") + "%");
+        }
 
         if(digitalGlitch.intensity <= 0) {
             if (tiltShift.isActiveAndEnabled) {
@@ -187,6 +273,8 @@ public class PlayerLogic : MonoBehaviour {
                     fpsController.UnlockKeyboardMove();
                     cameraShake.shakeDuration = 2;
                     puffOfSmokeDetonator.Explode();
+
+                    powerStartCountDown = true;
                     hudPanel.SetActive(true);
                     hitGroundForFirstTime = true;
                 }

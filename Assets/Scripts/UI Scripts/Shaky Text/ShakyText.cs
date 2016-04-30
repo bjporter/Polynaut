@@ -33,10 +33,6 @@ public class ShakyText : MonoBehaviour {
             textList[textCount] = t.GetComponent<Text>();
             textCount++;
         }
-
-        //textList[0].color = Color.green;
-        //Debug.Log("color Alpha: " + textList[0].color.a);
-        //Debug.Log("transform position x " + textOriginalPositionX[0]);
     }
 	
     void Start() {
@@ -45,6 +41,12 @@ public class ShakyText : MonoBehaviour {
             textList[i].text = textValue;
         }
 
+    }
+
+    public void SetText(string newText) {
+        for(int i = 0; i < textList.Length; i++) {
+            textList[i].text = newText;
+        }
     }
 
     public void SetAlpha(float newAlpha) {
