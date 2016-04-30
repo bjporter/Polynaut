@@ -98,8 +98,8 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: 0.16446799, g: 0.8602941, b: 0.31323227, a: 1}
+        second: {r: 0.05833692, g: 0.6102941, b: 0.17634271, a: 1}
       data:
         first:
           name: _Color2
-        second: {r: 0.52751124, g: 0.75, b: 0.10477942, a: 1}
+        second: {r: 0.03125378, g: 0.04411763, b: 0.0068122824, a: 1}
