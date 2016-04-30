@@ -89,12 +89,6 @@ public class PlayerInput : MonoBehaviour {
     /// </summary>
     private bool hitGroundForFirstTime = false;
 
-    /*
-    private bool isEnding1; // teleport out
-    private bool isEnding2; // falling
-    private bool isEnding3; // power
-    */
-
 
     [SerializeField]
     private GameObject titlePanel;
@@ -110,6 +104,9 @@ public class PlayerInput : MonoBehaviour {
 
     [SerializeField]
     private GameObject gameOverPanel;
+
+    [SerializeField]
+    private GameObject hudPanel;
 
     void Awake () {
         fpsController = gameObject.GetComponentInParent<FirstPersonController>();
@@ -129,19 +126,16 @@ public class PlayerInput : MonoBehaviour {
         analogGlitch.verticalJump = .02f;
         analogGlitch.horizontalShake = .011f;                                                          
         analogGlitch.colorDrift = .11f;
-
-        //tiltShift.enabled = true;
-        //bloomAndFlares.enabled = true;
     }
 
     void Start() {
-        //lock player mouse test
     }
 
     void Update () {
         if(player.transform.position.y <= -50f) {
             fpsController.LockKeyboardMove();
             fpsController.LockMouseLook();
+            hudPanel.SetActive(false);
             gameOverPanel.SetActive(true);
         }
 
@@ -194,6 +188,7 @@ public class PlayerInput : MonoBehaviour {
                     fpsController.UnlockKeyboardMove();
                     cameraShake.shakeDuration = 2;
                     puffOfSmokeDetonator.Explode();
+                    hudPanel.SetActive(true);
                     hitGroundForFirstTime = true;
                 }
             }

@@ -262,8 +262,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startTimeMin: 0
   startTimeMax: 0.05
-  stopTimeMin: 13
-  stopTimeMax: 14
+  stopTimeMin: 11
+  stopTimeMax: 13
   firstMaterial: {fileID: 2100000, guid: f892253ab15f74115b6d10bd736b2e29, type: 2}
   secondMaterial: {fileID: 2100000, guid: 36aa334bd0865ca459c9b3dfbbaf7198, type: 2}
 --- !u!1002 &11400005

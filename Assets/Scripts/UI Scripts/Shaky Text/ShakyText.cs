@@ -10,6 +10,9 @@ public class ShakyText : MonoBehaviour {
     [SerializeField]
     private string textValue;
 
+    [SerializeField]
+    private float shakeAmount = 2.5f;
+
     ///////////////////////
     /// Variables
     ///////////////////////
@@ -56,11 +59,10 @@ public class ShakyText : MonoBehaviour {
     void Update () {
         //Debug.Log("< time: " + Time.deltaTime);
         if (Time.deltaTime >= ONE_FRAME_60FPS) { // or 1/60th a frame
-            float textRange = 2.5f;
             float outOfBoundsX = 5f;
 
             for(int i = 0; i < textList.Length; i++) {
-                float randomStart = Random.Range(-textRange, textRange);
+                float randomStart = Random.Range(-shakeAmount, shakeAmount);
                 Vector3 t = textList[i].transform.position;
                 t.x += randomStart;
 
