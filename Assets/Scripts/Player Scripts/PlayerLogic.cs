@@ -39,6 +39,24 @@ public class PlayerLogic : MonoBehaviour {
 
 
     ///////////////////////
+    /// Animation Vars
+    ///////////////////////
+
+    /// 
+    /// These variables concern the Game Menu
+    /// 
+    private float animationGameMenuLargeShipStartBeforeFadeInPositionY = 615.98f;
+    private bool showPolynautTitleText = false;
+    private bool showPressAnyKeyText = false;
+    private float mainMenuTitleTextAlphaStart = 0;
+    private float mainMenuPressAnyKeyTextAlphaStart = 0;
+    private float animationMainMenuTitleTextAlphaFadeOutStart = 0.3f;
+    private float animationMainMenuPressAnyKeyTextAlphaFadeOutStart = 0.3f;
+
+
+
+
+    ///////////////////////
     /// Constants
     ///////////////////////
     private const float ONE_FRAME_60FPS = 0.0167f;
@@ -110,8 +128,6 @@ public class PlayerLogic : MonoBehaviour {
     [SerializeField]
     private ShakyText mainMenuTitle;
 
-    private bool showPolyNaut;
-    private float mainMenuAlphaStart = 0;
 
     [SerializeField]
     private ShakyText mainMenuPresAnyToStart;
@@ -243,10 +259,15 @@ public class PlayerLogic : MonoBehaviour {
         /*
             GAME STARTED
         */
-        if (Input.anyKey && !gameObject.GetComponentInParent<FirstPersonController>().isActiveAndEnabled) {
+        if (largeShip.transform.position.y <= 300f && Input.anyKey && !gameObject.GetComponentInParent<FirstPersonController>().isActiveAndEnabled) {
             gameObject.GetComponentInParent<FirstPersonController>().enabled = true;
             gameStarted = true;
-            //fpsController.LockMouseLook();
+            if (largeShip.transform.position.y >= 300f) {
+                Vector3 t = largeShip.transform.position;
+                t.y = 300;
+                largeShip.transform.position = t;
+            }
+
             fpsController.LockKeyboardMove();
         }
 
@@ -303,40 +324,59 @@ public class PlayerLogic : MonoBehaviour {
                     hitGroundForFirstTime = true;
                 }
             }
+            
+                if(animationMainMenuPressAnyKeyTextAlphaFadeOutStart >= 0) {           
+                    animationMainMenuPressAnyKeyTextAlphaFadeOutStart -= 0.3f * (1f / (1.5f / Time.deltaTime));
 
-            if (Time.deltaTime >= ONE_FRAME_60FPS) { // or 1/60th a frame
-                float intensityIncrement = (Time.deltaTime / transitionAfterGameStartedSeconds); // over 3 seconds get %, and multiply by max intensity of 95
-                digitalGlitch.intensity = digitalGlitch.intensity - intensityIncrement < 0 ? 0 : digitalGlitch.intensity - intensityIncrement;
-                analogGlitch.scanLineJitter = analogGlitch.scanLineJitter - intensityIncrement < 0 ? 0 : analogGlitch.scanLineJitter - intensityIncrement;
-                analogGlitch.verticalJump = analogGlitch.verticalJump - intensityIncrement < 0 ? 0 : analogGlitch.verticalJump - intensityIncrement;
-                analogGlitch.horizontalShake = analogGlitch.horizontalShake - intensityIncrement < 0 ? 0 : analogGlitch.horizontalShake - intensityIncrement;
-                analogGlitch.colorDrift = analogGlitch.colorDrift  - intensityIncrement < 0 ? 0 : analogGlitch.colorDrift - intensityIncrement;
-                noiseAndGrain.intensityMultiplier = (analogGlitch.colorDrift - intensityIncrement < 0 ? 0 : analogGlitch.colorDrift - intensityIncrement)/3f;
-                tiltShift.blurArea = (analogGlitch.colorDrift - intensityIncrement < 0 ? 0 : analogGlitch.colorDrift - intensityIncrement)/15;
-                bloomAndFlares.bloomIntensity = analogGlitch.horizontalShake - intensityIncrement < 0 ? 0 : analogGlitch.horizontalShake - intensityIncrement;
-                ramp.opacity = analogGlitch.horizontalShake - intensityIncrement < 0 ? 0 : analogGlitch.horizontalShake - intensityIncrement;
+                    digitalGlitch.intensity = digitalGlitch.intensity <= 0 ? 0 : animationMainMenuPressAnyKeyTextAlphaFadeOutStart;
+                    analogGlitch.scanLineJitter = analogGlitch.scanLineJitter <= 0 ? 0 : animationMainMenuPressAnyKeyTextAlphaFadeOutStart;
+                    analogGlitch.verticalJump = analogGlitch.verticalJump <= 0 ? 0 : animationMainMenuPressAnyKeyTextAlphaFadeOutStart;
+                    analogGlitch.horizontalShake = analogGlitch.verticalJump <= 0 ? 0 : animationMainMenuPressAnyKeyTextAlphaFadeOutStart;
+                    analogGlitch.colorDrift = analogGlitch.colorDrift <= 0 ? 0 : animationMainMenuPressAnyKeyTextAlphaFadeOutStart;
+                    noiseAndGrain.intensityMultiplier = noiseAndGrain.intensityMultiplier <=0 ? 0 : animationMainMenuPressAnyKeyTextAlphaFadeOutStart;
+                    tiltShift.blurArea = tiltShift.blurArea  <= 0 ? 0 : animationMainMenuPressAnyKeyTextAlphaFadeOutStart * 15f;
+                    bloomAndFlares.bloomIntensity = bloomAndFlares.bloomIntensity  <= 0 ? 0 :animationMainMenuPressAnyKeyTextAlphaFadeOutStart;
+                    ramp.opacity = ramp.opacity  <= 0 ? 0 : animationMainMenuPressAnyKeyTextAlphaFadeOutStart;
 
 
-                mainMenuPresAnyToStart.SetAlpha(analogGlitch.colorDrift - intensityIncrement < 0 ? 0 : analogGlitch.colorDrift - intensityIncrement);
-                mainMenuTitle.SetAlpha(analogGlitch.colorDrift - intensityIncrement < 0 ? 0 : analogGlitch.colorDrift - intensityIncrement);
-            }
-        } else {
-            if (Time.deltaTime >= ONE_FRAME_60FPS) { // or 1/60th a frame
-                
-                if(showPolyNaut && mainMenuAlphaStart <= .3) {
-                    mainMenuAlphaStart += 0.0065f;
-                    mainMenuTitle.SetAlpha(mainMenuAlphaStart);
-                    mainMenuPresAnyToStart.SetAlpha(mainMenuAlphaStart);
+                    animationMainMenuTitleTextAlphaFadeOutStart -= 0.3f * (1f / (1.5f / Time.deltaTime));
+                    mainMenuPresAnyToStart.SetAlpha(animationMainMenuPressAnyKeyTextAlphaFadeOutStart);
+                    mainMenuTitle.SetAlpha(animationMainMenuTitleTextAlphaFadeOutStart);
                 }
+        } else {
+            if (largeShip.transform.position.y >= 300f) {
+                Vector3 t = largeShip.transform.position;
+                t.y -= (animationGameMenuLargeShipStartBeforeFadeInPositionY - 300f) * (1f/(5f/Time.deltaTime));
+                largeShip.transform.position = t;
+            } else {
+                if (mainMenuTitleTextAlphaStart <= 0.3f) {
+                    mainMenuTitleTextAlphaStart += 0.3f * (1f / (2f / Time.deltaTime));
+                    mainMenuTitle.SetAlpha(mainMenuTitleTextAlphaStart);
+                    animationMainMenuTitleTextAlphaFadeOutStart = mainMenuTitleTextAlphaStart;
+                } else {
+                    if (mainMenuPressAnyKeyTextAlphaStart <= 0.28f) {
+                        mainMenuPressAnyKeyTextAlphaStart += 0.28f * (1f / (2f / Time.deltaTime));
+                        mainMenuPresAnyToStart.SetAlpha(mainMenuPressAnyKeyTextAlphaStart);
+                    }
+                }
+            }
+
+            /*if (Time.deltaTime >= ONE_FRAME_60FPS) { // or 1/60th a frame
+                
+                //if(showPolyNaut && mainMenuAlphaStart <= .3) {
+                //    mainMenuAlphaStart += 0.0065f;
+                //    mainMenuTitle.SetAlpha(mainMenuAlphaStart);
+                //    mainMenuPresAnyToStart.SetAlpha(mainMenuAlphaStart);
+                //}
 
                 if (largeShip.transform.position.y >= 300f) {
                     Vector3 t = largeShip.transform.position;
                     t.y -= 6f;
                     largeShip.transform.position = t;
-                } else {
-                    showPolyNaut = true;
-                }
-            }
+                } //else {
+                  //  showPolyNaut = true;
+                //}
+            }*/
         } //If game started, else you're in the menu
     } //Update()
 }
