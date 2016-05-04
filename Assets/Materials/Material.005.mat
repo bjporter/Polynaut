@@ -38,14 +38,14 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _OcclusionMap
+          name: _ParallaxMap
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _ParallaxMap
+          name: _OcclusionMap
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -93,12 +93,12 @@ Material:
         second: 0.5
       data:
         first:
-          name: _Metallic
-        second: 0
-      data:
-        first:
           name: _Parallax
         second: 0.02
+      data:
+        first:
+          name: _Metallic
+        second: 0
       data:
         first:
           name: _ZWrite
@@ -135,4 +135,4 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: 0.778, g: 0.1728889, b: 0.017288888, a: 1}
+        second: {r: 0.9, g: 0.2, b: 0.02, a: 1}

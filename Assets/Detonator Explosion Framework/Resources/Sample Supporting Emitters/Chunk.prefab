@@ -12,7 +12,7 @@ GameObject:
   - 65: {fileID: 6500000}
   - 23: {fileID: 2300000}
   - 54: {fileID: 5400000}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Chunk
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34,7 +34,7 @@ GameObject:
   - 12: {fileID: 1200004}
   - 26: {fileID: 2600004}
   - 114: {fileID: 11400004}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SmokeTrail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -262,8 +262,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startTimeMin: 0
   startTimeMax: 0.05
-  stopTimeMin: 11
-  stopTimeMax: 13
+  stopTimeMin: 3.82
+  stopTimeMax: 6.23
   firstMaterial: {fileID: 2100000, guid: f892253ab15f74115b6d10bd736b2e29, type: 2}
   secondMaterial: {fileID: 2100000, guid: 36aa334bd0865ca459c9b3dfbbaf7198, type: 2}
 --- !u!1002 &11400005

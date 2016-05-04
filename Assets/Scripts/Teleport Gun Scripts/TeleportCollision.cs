@@ -6,10 +6,13 @@ public class TeleportCollision : MonoBehaviour {
     [SerializeField]
     private GameObject fpsTeleportGun;
 
-    void OnCollisionEnter(Collision target) {
-        if (target.gameObject.tag == "Player") {
-            gameObject.SetActive(false);
-            fpsTeleportGun.SetActive(true);
-        }
+    void OnTriggerEnter(Collider target) {
+        //if (target.gameObject.tag == "Player") {
+          //  Debug.Log("collision with player!");
+
+            //gameObject.SetActive(false);
+            //fpsTeleportGun.SetActive(true);
+            PlayerLogic.instance.PickedUpTeleportGun();
+        //}
     }
 }

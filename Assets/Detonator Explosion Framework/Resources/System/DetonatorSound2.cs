@@ -3,7 +3,7 @@ using System.Collections;
 
 [RequireComponent (typeof (Detonator))]
 [AddComponentMenu("Detonator/Sound")]
-public class DetonatorSound : DetonatorComponent {
+public class DetonatorSound2 : DetonatorComponent {
 	
 	public AudioClip[] nearSounds;
 	public AudioClip[] farSounds;
@@ -19,7 +19,7 @@ public class DetonatorSound : DetonatorComponent {
 	
 	override public void Init()
 	{
-		_soundComponent = gameObject.GetComponent<AudioSource>();
+		_soundComponent = (AudioSource)gameObject.AddComponent <AudioSource>();
 	}
 
 	void Update()
@@ -37,13 +37,8 @@ public class DetonatorSound : DetonatorComponent {
 			}
 		}
 	}
-
-    private void PlaySoundThroughMixer(AudioClip clip) {
-        _soundComponent.clip = clip;
-        _soundComponent.Play();
-    }
-
-    private int _idx;
+	
+	private int _idx;
 	override public void Explode()
 	{
 		if (detailThreshold > detail) return;
@@ -54,21 +49,16 @@ public class DetonatorSound : DetonatorComponent {
 		}		
 		if (_explodeDelay <= 0) 
 		{
-	//		_soundComponent.minVolume = minVolume;
-	//		_soundComponent.maxVolume = maxVolume;
-	//		_soundComponent.rolloffFactor = rolloffFactor;
-			
-			if (Vector3.Distance(Camera.main.transform.position, this.transform.position) < distanceThreshold)
+            if (Vector3.Distance(Camera.main.transform.position, this.transform.position) < distanceThreshold)
 			{
-				_idx = (int)(Random.value * nearSounds.Length);
-                PlaySoundThroughMixer(nearSounds[_idx]);
-                //_soundComponent.PlayOneShot(nearSounds[_idx]);
-            }
+
+                _idx = (int)(Random.value * nearSounds.Length);
+				_soundComponent.PlayOneShot(nearSounds[_idx]);
+			}
 			else
 			{
 				_idx = (int)(Random.value * farSounds.Length);
-                PlaySoundThroughMixer(nearSounds[_idx]);
-                //_soundComponent.PlayOneShot(farSounds[_idx]);
+				_soundComponent.PlayOneShot(farSounds[_idx]);
 			}	
 			_delayedExplosionStarted = false;
 			_explodeDelay = 0f;			

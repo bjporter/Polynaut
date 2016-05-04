@@ -46,8 +46,8 @@ public class PlayerLogic : MonoBehaviour {
     /// These variables concern the Game Menu
     /// 
     private float animationGameMenuLargeShipStartBeforeFadeInPositionY = 615.98f;
-    private bool showPolynautTitleText = false;
-    private bool showPressAnyKeyText = false;
+    //private bool showPolynautTitleText = false;
+    //private bool showPressAnyKeyText = false;
     private float mainMenuTitleTextAlphaStart = 0;
     private float mainMenuPressAnyKeyTextAlphaStart = 0;
     private float animationMainMenuTitleTextAlphaFadeOutStart = 0.3f;
@@ -72,7 +72,7 @@ public class PlayerLogic : MonoBehaviour {
     /// Player is out of the start menu, and in the game
     /// </summary>
     private bool gameStarted = false;
-    private float gameStartedAt = 0;
+    //private float gameStartedAt = 0;
     private bool setGameStartedAt = false;
     private float transitionAfterGameStartedSeconds = 5f;
     private float secondsOfAfterGameStarted = 0f;
@@ -82,25 +82,25 @@ public class PlayerLogic : MonoBehaviour {
     /// Initial transition into the game is done, and we're now looking down on the map ready to fall out of the big ship
     /// Start at x0, Rotate: to x-26 in 1.5 seconds
     /// </summary>
-    private bool fallingOutOfBigShipStarted = false;
-    private float secondsOfTransitionAfterfallingStarted = 1.5f;
+    //private bool fallingOutOfBigShipStarted = false;
+    //private float secondsOfTransitionAfterfallingStarted = 1.5f;
 
     /// <summary>
     /// Falling 1.
     /// Rotate: x-26 to x50 in 1.2 seconds
     /// </summary>
-    private bool fallingActionOneDone = false;
+    //private bool fallingActionOneDone = false;
 
     /// <summary>
     /// Falling 2.
     /// </summary>
-    private bool fallingActionTwoDone = false;
+    //private bool fallingActionTwoDone = false;
 
     /// <summary>
     /// Falling 3.
     /// Rotate: x50 to x87 in 1.5 seconds WHILE z-5.7 rotates continously until ground is hit
     /// </summary>
-    private bool fallingActionThreeDone = false;
+    //private bool fallingActionThreeDone = false;
 
     /// <summary>
     /// Ground / Done Falling.
@@ -118,9 +118,16 @@ public class PlayerLogic : MonoBehaviour {
     private float powerSecondsStart = 30;
     private bool powerStartCountDown = false;
     private int battariesLeft = 3;
+    private bool hasTeleportGun = false;
+    private bool teleportGunFired = false;
+    private Vector3 lastTeleportBlastVector;
 
+    private bool endingOneOfThreeStarted = false;
     private bool endingTwoOfThreeStarted = false;
     private bool endingThreeOfThreeStarted = false;
+
+    [SerializeField]
+    private GameObject massiveRippleEffect;
 
     [SerializeField]
     private GameObject titlePanel;
@@ -128,6 +135,8 @@ public class PlayerLogic : MonoBehaviour {
     [SerializeField]
     private ShakyText mainMenuTitle;
 
+    [SerializeField]
+    private GameObject teleportBlast;
 
     [SerializeField]
     private ShakyText mainMenuPresAnyToStart;
@@ -136,7 +145,13 @@ public class PlayerLogic : MonoBehaviour {
     private GameObject mainMenuAsteroids;
 
     [SerializeField]
+    private GameObject gameOverPanelEnding1;
+
+    [SerializeField]
     private GameObject gameOverPanelEnding2;
+
+    [SerializeField]
+    private GameObject worldTerrain;
 
     [SerializeField]
     private GameObject gameOverPanelEnding3;
@@ -154,6 +169,10 @@ public class PlayerLogic : MonoBehaviour {
     private GameObject largeShip;
 
     private ShakyText hudPowerText;
+
+    public void PickedUpTeleportGun() {
+        hasTeleportGun = true;
+    }
 
     void Awake () {
         if(instance == null) {
@@ -199,12 +218,15 @@ public class PlayerLogic : MonoBehaviour {
             Application.Quit();
         }
 
+        
         if(endingThreeOfThreeStarted) {
+            hudPanel.SetActive(false);
             gameOverPanelEnding3.SetActive(true);
             fpsController.LockKeyboardMove();
         }
-
+  
         if (endingTwoOfThreeStarted) {
+            hudPanel.SetActive(false);
             asteroidField1.transform.position = player.transform.position;
 
             /* //Rotate player to top of screen
@@ -254,7 +276,7 @@ public class PlayerLogic : MonoBehaviour {
             gameOverPanelEnding2.SetActive(true);
             endGameRotationYStart = player.transform.rotation.eulerAngles.y;
             endGameRotationXStart = transform.rotation.eulerAngles.x;
-}
+        }
 
         /*
             GAME STARTED
@@ -274,11 +296,8 @@ public class PlayerLogic : MonoBehaviour {
         if(powerStartCountDown) {
             powerSecondsLeft -= Time.deltaTime;
             powerPercent = (powerSecondsLeft / powerSecondsStart) * powerStartPercent;
-            Debug.Log(Time.deltaTime);
-            Debug.Log("Time: " + Time.deltaTime + ", " + powerSecondsLeft);
-            Debug.Log("*" + "(" + powerSecondsStart + ") * " + powerStartPercent);
 
-            if (powerPercent < 0.025f) {
+            if (!endingOneOfThreeStarted && powerPercent < 0.025f) {
 
                 endingThreeOfThreeStarted = true;
                 powerPercent = 0.0f;
@@ -298,6 +317,47 @@ public class PlayerLogic : MonoBehaviour {
         }
 
         if (gameStarted) {
+            if(teleportGunFired) {
+                if (Vector3.Distance(teleportBlast.transform.position, GetComponentInChildren<Transform>().position) > 13) {
+                    ///Debug.Log("Shit is far enough away");
+                    ///
+
+                    //massiveRippleEffect.transform.position = teleportBlast.transform.position;
+                    //massiveRippleEffect.transform.rotation = Quaternion.Euler(lastTeleportBlastVector.x, lastTeleportBlastVector.y, lastTeleportBlastVector.z);
+                    //massiveRippleEffect.SetActive(true);
+
+                }
+
+                //Vector3 t = teleportBlast.transform.position;
+                //t.z += .05f;
+                //teleportBlast.transform.position = t;
+            }
+
+
+            if(hasTeleportGun) {
+                endingOneOfThreeStarted = true;
+                gameOverPanelEnding1.SetActive(true);
+                hudPanel.SetActive(false);
+                fpsController.LockKeyboardMove();
+
+                if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)) { //Either mouse button 1 or 2
+                    //Debug.Log("fire!!!!!!!!");
+
+                    Transform t = GetComponentInChildren<Transform>();
+                    //Debug.Log(t.position.ToString());
+
+                    //Debug.Log(" ");
+                    //Debug.Log(t.rotation.eulerAngles.ToString());
+                    //Debug.Log(t.rotation.ToString());
+                    lastTeleportBlastVector = t.rotation.eulerAngles;
+                    teleportBlast.transform.position = t.position;
+                    teleportBlast.transform.rotation = t.rotation;
+                    teleportBlast.SetActive(true);
+
+                    teleportGunFired = true;
+                }
+            }
+
             if(!setGameStartedAt) {
                 secondsOfAfterGameStarted = Time.time;
                 setGameStartedAt = true;

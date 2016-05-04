@@ -7,10 +7,10 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Teleporter
-  m_Shader: {fileID: 45, guid: 0000000000000000f000000000000000, type: 0}
+  m_Shader: {fileID: 4800000, guid: 963484209d11fd7f110076aa44295342, type: 3}
   m_ShaderKeywords: _METALLICGLOSSMAP
   m_LightmapFlags: 5
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 3000
   stringTagMap: {}
   m_SavedProperties:
     serializedVersion: 2
@@ -134,6 +134,10 @@ Material:
         first:
           name: _Mode
         second: 0
+      data:
+        first:
+          name: _BumpAmt
+        second: 10
     m_Colors:
       data:
         first:
@@ -142,7 +146,7 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: 0.2205882, g: 0.20112453, b: 0.20112453, a: 1}
+        second: {r: 0.33823532, g: 0.32082614, b: 0.32082614, a: 0}
       data:
         first:
           name: _SpecColor
